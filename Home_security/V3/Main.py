@@ -129,4 +129,4 @@ class RaspberryHome(object):
 if __name__ == "__main__":
     Raspberry = RaspberryHome()
     Raspberry.run()
-    
+    test()
