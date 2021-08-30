@@ -8,20 +8,15 @@ import threading
 
 class Radar:
 
-    def __init__(self, queue_object :object = None, delay: int = 2, motion_pin: int = 20, stop_event: object = object):
-        
-        if queue_object is None:
-            self.queue_object = print
-        else:
-            self.queue_object = queue_object.put
-        
+    def __init__(self, delay: int = 2, motion_pin: int = 20, stop_event: object = object, queue_object :object = None):
+        self.queue_object = queue_object.put
         self.delay = delay
         self.radar_object = MotionSensor(motion_pin)
         self.stop_event = stop_event
 
 
-    def run(self):
-        while:
+    def run(self, stop_event: object = None):
+        while not self.stop_event.is_set():
             self.radar_object.wait_for_inactive()
             Thread = "Radar"
             Message = "[Radar]: Motion detected at [{}]".format(dt.datetime.now())
@@ -34,11 +29,7 @@ class Radar:
                 break
 
     def clean_up(self):
-        GPIO.cleanup()
-
-    def terminate(self):
-        self.clean_up()
-        self.stop = True   
+        GPIO.cleanup()   
 
 if __name__ == '__main__':
     
@@ -58,4 +49,3 @@ if __name__ == '__main__':
 
     print("End program")
     stop_event.set()
-    
