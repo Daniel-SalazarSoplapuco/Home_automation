@@ -5,7 +5,6 @@ from gpiozero import MotionSensor
 from queue import Queue
 import threading
 
-
 class Radar:
 
     def __init__(self, delay: int = 2, motion_pin: int = 20, stop_event: object = object, queue_object :object = None):
@@ -32,7 +31,6 @@ class Radar:
         GPIO.cleanup()   
 
 if __name__ == '__main__':
-    
     queue_object = Queue(maxsize=100)
     stop_event= threading.Event()
     process = Radar(stop_event=stop_event, queue_object=queue_object)
