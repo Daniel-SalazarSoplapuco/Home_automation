@@ -3,3 +3,10 @@ config.py
 
 #exclude everything created from code
 /program_files/
+
+#exclude all pycache
+/__pycache__/
+
+
+#exclude itself, not sure why this aint standard
+.gitignore
