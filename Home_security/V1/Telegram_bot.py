@@ -10,8 +10,8 @@ class Telegram_bot(object):
         self.to_whom = "1514751302"
 
     def send_message(self, messsage="Hi, there!"):
-        # on usage of this command, an message can be sent to any user regardless if there is an ongoing conversation
-        self.bot.send_message(chat_id=self.to_whom, text=messsage)
+        # on usage of this command, an message can be sent to any user regardless if there is an ongoing conversatio
+        self.bot.send_message(chat_id=self.to_whom, text=message.to_json())
         
     def send_image(self, path):
         self.bot.send_photo(chat_id=self.to_whom, photo=open(path, 'rb'))

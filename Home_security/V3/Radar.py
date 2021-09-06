@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO
 from gpiozero import MotionSensor
 from queue import Queue
 import threading
+import random as rd
+
 
 class Radar:
 
@@ -12,20 +14,33 @@ class Radar:
         self.delay = delay
         self.radar_object = MotionSensor(motion_pin)
         self.stop_event = stop_event
+        self.thread = "Radar"
 
 
-    def run(self, stop_event: object = None):
+    def run(self):
         while not self.stop_event.is_set():
             self.radar_object.wait_for_inactive()
-            Thread = "Radar"
             Message = "[Radar]: Motion detected at [{}]".format(dt.datetime.now())
             Arguments = [True, dt.datetime.now().strftime("%Y%m%d %H:%M:%S")]
-            self.queue_object([Thread, Message, Arguments])
+            self.queue_object([self.thread, Message, Arguments])
             tm.sleep(self.delay)
 
             if self.stop_event.is_set():
                 self.clean_up
                 break
+        
+    def run_simulated(self):
+        while not self.stop_event.is_set():
+            tm.sleep(rd.randint(0,10)/10)
+            Message = "[Radar]: Motion detected at [{}]".format(dt.datetime.now())
+            Arguments = [True, dt.datetime.now().strftime("%Y%m%d %H:%M:%S")]
+            self.queue_object([self.thread, Message, Arguments])
+            tm.sleep(self.delay)
+
+            if self.stop_event.is_set():
+                self.clean_up
+                break
+    
 
     def clean_up(self):
         GPIO.cleanup()   

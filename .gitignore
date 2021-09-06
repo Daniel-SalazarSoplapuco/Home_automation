@@ -1,1 +1,5 @@
-config.txt
+#exclude all configuration passwords
+config.py
+
+#exclude everything created from code
+/program_files/

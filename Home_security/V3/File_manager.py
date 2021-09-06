@@ -2,7 +2,6 @@ import os
 import shutil
 
 
-
 class FileManager(object):
 
     def __init__(self, work_directory):
@@ -56,7 +55,7 @@ class FileManager(object):
             else:
                 return False
 
-    
+    #allow creaiton of multiple folders, and folders on multiple levels
     def folder_handler_multiple(self, paths, keys ,return_list=True):
         created_list = []
         for path, key in zip(paths, keys):
@@ -101,12 +100,12 @@ class FileManager(object):
             files = [files]
         for file in files:
             os.remove(file)
-                
+    #return all the created folders            
     def return_file_dict(self):
         print(self.file_dicts)
     
         
 if __name__ == '__main__':
     fm = FileManager('test2')
-    print(fm.folder_handler_multiple([['program_files', 'fuck you'],['test', '2'],'double'], [1,2,3]))
+    print(fm.folder_handler_multiple([['program_files', 'fuck you'],['test', '2'],'double'],))
     # print(fm.return_file_dict())

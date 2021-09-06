@@ -20,15 +20,17 @@ class test_thread_class():
 
 class thread_handeler():
 
-    def __init__(self, name, process_object):
+    def __init__(self, name, process_object, run_object_name):
         self.name = name
         self.process_object = process_object
+        self.run_object_name = run_object_name
         self.thread_object = object
         self.stop_event = threading.Event()
 
     def start(self):
         self.process_object.stop_event = self.stop_event
-        self.thread_object = threading.Thread(target=self.process_object.run)
+        self.thread_object = threading.Thread(target=getattr(self.process_object, self.run_object_name ))
+        # self.thread_object = threading.Thread(target=self.process_object.run)
         self.thread_object.daemon = True
         self.thread_object.start()
 
@@ -49,9 +51,9 @@ class multiple_thread_handeler():
     def __init__(self):
         self.running_threads = {}
 
-    def initalize_thread(self, name, process_object):
-        #required is that the class has a variable stop_event and that it has an method run, which run the desired thread
-        self.running_threads[name] = thread_handeler(name, process_object)
+    def initalize_thread(self, name, process_object, run_object_name):
+        # init should contain a variable stop_event which should be used to indicate when a process should stop
+        self.running_threads[name] = thread_handeler(name, process_object, run_object_name)
         self.running_threads[name].start()
 
     def stop_specific_thread(self, name):
@@ -85,13 +87,19 @@ if __name__ == '__main__':
     process3 = test_thread_class(name=3)
 
     multiple_threads = multiple_thread_handeler()
-    multiple_threads.initalize_thread('test1', process1)
-    multiple_threads.initalize_thread('test2', process2)
-    multiple_threads.initalize_thread('test3', process3)
+    multiple_threads.initalize_thread('test1', process1, 'run')
+    multiple_threads.initalize_thread('test2', process2, 'run')
+    multiple_threads.initalize_thread('test3', process3, 'run')
     tm.sleep(3)
     print(multiple_threads.return_living_threads())
+    
+    print('Stop all threads')
     multiple_threads.stop_all_threads()
-    print(multiple_threads.return_living_threads())
+    
+    print('All threads should be false {}'.format( multiple_threads.return_living_threads()))
+    tm.sleep(2)
+    
+    print('Restarting all threads')
     multiple_threads.restart_all_threads()
     tm.sleep(1)
     print(multiple_threads.return_living_threads())
