@@ -30,7 +30,7 @@ class RaspberryHome():
     def handle_home_security(self, arguments):
         # invoke actions if radar detects any movement and if user has armed security
         if self.home_security_armed:
-
+            pass
 
         else:
             pass
