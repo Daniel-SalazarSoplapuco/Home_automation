@@ -65,7 +65,7 @@ class TelegramBot(object):
     def __init__(self, bot_name, token, one_time_password, queue_object, psuedo_commands=None):
         self.auth_challenge = pyotp.TOTP(one_time_password)
         self.queue = queue_object
-        self.thread = 'telegram' 
+        self.thread = 'Telegram' 
 
         self.bot = t.Bot(token=token)
         self.update = Updater(bot=self.bot, use_context=True)
@@ -95,7 +95,7 @@ class TelegramBot(object):
         
     def universal_handler(self, update, context):
         update.message.text = update.message.text.split(' ')[0]
-        self.report_to_queue(update)
+        self.report_to_queue(update, context.args)
         update = self.check_user(update)
         self.command_dict[update.message.text](update, context)
 
@@ -126,11 +126,16 @@ class TelegramBot(object):
                 self.reply_message(update, "The provided password is incorrect")
             else:
                 user.admin = True
-                for key in list(self.command_dict.keys()):
-                    user.add_commands(key)
+                self.admin_assign_commands(user.user_id)
                 self.reply_message(update, "You are now an admin")
                 self.list_commands(update, context)
                 self.one_admin(update)
+
+    def admin_assign_commands(self, user_id):
+        user = self.return_user(user_id)
+        for key in list(self.command_dict.keys()):
+            user.add_commands(key)
+
 
     def list_commands(self, update, context):
         user = self.return_user(update.message.chat.id)
@@ -139,12 +144,15 @@ class TelegramBot(object):
         commands_available = 'The following commands are available to you: \n' + commands_available
         self.reply_message(update, commands_available)
 
-    def report_to_queue(self, update):
+    def report_to_queue(self, update, context):
         user = self.return_user(update.message.chat.id)
+
+        if not user.is_authorized(update.message.text):
+            context = None
         Message = "[Telegram]: user: [{}], who is admin [{}], requested command [{}] granted [{}]".format(
             user.user_id, user.admin, update.message.text, user.is_authorized(update.message.text)
         )
-        Arguments = [user.user_id, user.admin, update.message.text, user.is_authorized(update.message.text),
+        Arguments = [user.is_authorized(update.message.text), user.user_id, user.admin, update.message.text, context,
                      dt.datetime.now().strftime("%Y%m%d %H:%M:%S")]
         self.queue.put([self.thread, Message, Arguments])
 
@@ -189,14 +197,20 @@ class TelegramBot(object):
         if type(command_list) is list():
             command_list = [command_list]
         for command in command_list:
+            if not command[0].startswith("/"):
+                command = "/" + command
+                
             self.command_dict[command] = self.stop
               
     def create_admin(self):
-        self.users[config.telegram_admin_id] = UserClass(config.telegram_admin_id)
-        self.users[config.telegram_admin_id].admin = True           
+        self.users[config.telegram_admin_id()] = UserClass(config.telegram_admin_id())
+        self.users[config.telegram_admin_id()].admin = True           
+        self.admin_assign_commands(config.telegram_admin_id())
 
 if __name__ == '__main__':
 
     q = Queue(maxsize=100)
     bot = TelegramBot("Home", config.telegram_pw(), config.one_time_password(), q, psuedo_commands=['/hello', '/idiot', '/test'])
-
+    bot.create_admin()
+    print(bot.return_admin())
+    bot.send_image(config.telegram_admin_id(), "/home/uf829d/Projects/Raspberry_home_automation/Home_security/V3/program_files/Camera/Picture/output/image_2021-09-09_21-28-13.jpg")
