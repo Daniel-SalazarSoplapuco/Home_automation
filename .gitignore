@@ -2,10 +2,10 @@
 config.py
 
 #exclude everything created from code
-program_files/**
+
 
 #exclude everything created from code
-/program_files/**
+**/program_files
 
 #exclude all pycache
 /__pycache__/
@@ -13,3 +13,4 @@ program_files/**
 
 #exclude itself, not sure why this aint standard
 .gitignore
+nohup.out

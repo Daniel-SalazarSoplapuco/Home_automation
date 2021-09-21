@@ -38,7 +38,7 @@ class Radar:
         
     def run_simulated(self):
         while not self.stop_event.is_set():
-            tm.sleep(rd.randint(0,10)/10)
+            tm.sleep(rd.randint(0,15)/10)
             Message = "[Radar]: Motion detected at [{}]".format(dt.datetime.now())
             Arguments = [True, dt.datetime.now().strftime("%Y%m%d %H:%M:%S")]
             self.queue_object([self.thread_name, Message, Arguments])
